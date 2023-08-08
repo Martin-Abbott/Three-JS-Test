@@ -45,6 +45,30 @@ const atmosphere = new THREE.Mesh(
 
 scene.add(atmosphere);
 
+const starGeometry = new THREE.BufferGeometry();
+
+const starMaterial = new THREE.PointsMaterial({
+	color: 0xfdf4dc,
+});
+
+const starPositions = [];
+
+for (let i = 0; i < 5000; i++) {
+	const x = (Math.random() - 0.5) * 1500;
+	const y = (Math.random() - 0.5) * 1500;
+	const z = (Math.random() - 0.5) * 1500;
+	starPositions.push(x, y, z);
+}
+
+starGeometry.setAttribute(
+	"position",
+	new THREE.Float32BufferAttribute(starPositions, 3)
+);
+
+const stars = new THREE.Points(starGeometry, starMaterial);
+
+scene.add(stars);
+
 // const light1 = new THREE.DirectionalLight(0xffffff, 1);
 // light1.position.set(0, 5, 10);
 // scene.add(light1);
@@ -71,7 +95,7 @@ controls.enableDamping = true;
 controls.enablePan = false;
 controls.enableZoom = false;
 controls.autoRotate = true;
-controls.autoRotateSpeed = 6;
+controls.autoRotateSpeed = 2;
 
 window.addEventListener("resize", () => {
 	dims.width = window.innerWidth;
