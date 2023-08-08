@@ -11,6 +11,11 @@ const dims = {
 	height: window.innerHeight,
 };
 
+const mouse = {
+	x: 0,
+	y: 0,
+};
+
 const scene = new THREE.Scene();
 
 const earth = new THREE.Mesh(
@@ -76,9 +81,19 @@ window.addEventListener("resize", () => {
 	renderer.setSize(dims.width, dims.height);
 });
 
+addEventListener("mousemove", (event) => {
+	mouse.x = (event.clientX / innerWidth) * 2 - 1;
+	mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+});
+
 const resizeLoop = () => {
 	controls.update();
 	renderer.render(scene, camera);
+	gsap.to(scene.rotation, {
+		x: -mouse.y * 0.5,
+		y: mouse.x * 0.5,
+		duration: 1,
+	});
 	window.requestAnimationFrame(resizeLoop);
 };
 
