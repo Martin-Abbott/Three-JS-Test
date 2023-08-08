@@ -7,8 +7,8 @@ import atmosVertex from "./shaders/atmosVertex.glsl?raw";
 import atmosFragment from "./shaders/atmosFragment.glsl?raw";
 
 const dims = {
-	width: window.innerWidth,
-	height: window.innerHeight,
+	width: document.documentElement.clientWidth,
+	height: document.documentElement.clientHeight,
 };
 
 const mouse = {
@@ -98,16 +98,27 @@ controls.autoRotate = true;
 controls.autoRotateSpeed = 2;
 
 window.addEventListener("resize", () => {
-	dims.width = window.innerWidth;
-	dims.height = window.innerHeight;
+	dims.width = document.documentElement.clientWidth;
+	dims.height = document.documentElement.clientHeight;
 	camera.updateProjectionMatrix();
 	camera.aspect = dims.width / dims.height;
 	renderer.setSize(dims.width, dims.height);
 });
 
 addEventListener("mousemove", (event) => {
-	mouse.x = (event.clientX / innerWidth) * 2 - 1;
-	mouse.y = -(event.clientY / innerHeight) * 2 + 1;
+	mouse.x = (event.clientX / document.documentElement.clientWidth) * 2 - 1;
+	mouse.y = -(event.clientY / document.documentElement.clientHeight) * 2 + 1;
+});
+
+screen.orientation.addEventListener("change", () => {
+	console.log("orientation changed");
+	window.location.reload();
+	dims.width = document.documentElement.clientWidth;
+	dims.height = document.documentElement.clientHeight;
+	console.log(dims.width, dims.height);
+	renderer.setSize(dims.width, dims.height);
+	camera.updateProjectionMatrix();
+	camera.aspect = dims.width / dims.height;
 });
 
 const resizeLoop = () => {
