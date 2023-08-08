@@ -111,14 +111,13 @@ addEventListener("mousemove", (event) => {
 });
 
 screen.orientation.addEventListener("change", () => {
-	console.log("orientation changed");
 	window.location.reload();
-	dims.width = document.documentElement.clientWidth;
-	dims.height = document.documentElement.clientHeight;
-	console.log(dims.width, dims.height);
-	renderer.setSize(dims.width, dims.height);
-	camera.updateProjectionMatrix();
-	camera.aspect = dims.width / dims.height;
+	// dims.width = document.documentElement.clientWidth;
+	// dims.height = document.documentElement.clientHeight;
+	// console.log(dims.width, dims.height);
+	// renderer.setSize(dims.width, dims.height);
+	// camera.updateProjectionMatrix();
+	// camera.aspect = dims.width / dims.height;
 });
 
 const resizeLoop = () => {
