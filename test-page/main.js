@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { gsap } from "gsap";
+import vertexShader from "./shaders/vertex.glsl?raw";
+import fragmentShader from "./shaders/fragment.glsl?raw";
+import atmosVertex from "./shaders/atmosVertex.glsl?raw";
+import atmosFragment from "./shaders/atmosFragment.glsl?raw";
 
 const dims = {
 	width: window.innerWidth,
@@ -9,28 +13,46 @@ const dims = {
 
 const scene = new THREE.Scene();
 
-const geometry = new THREE.SphereGeometry(3, 64, 64);
+const earth = new THREE.Mesh(
+	new THREE.SphereGeometry(3, 64, 64),
+	new THREE.ShaderMaterial({
+		vertexShader,
+		fragmentShader,
+		uniforms: {
+			earthMap: {
+				value: new THREE.TextureLoader().load("./img/earth-map.jpg"),
+			},
+		},
+	})
+);
 
-const material = new THREE.MeshStandardMaterial({
-	map: new THREE.TextureLoader().load("./img/earth-map.jpg"),
-});
+scene.add(earth);
 
-const mesh = new THREE.Mesh(geometry, material);
-scene.add(mesh);
+const atmosphere = new THREE.Mesh(
+	new THREE.SphereGeometry(3.3, 70, 70),
+	new THREE.ShaderMaterial({
+		vertexShader: atmosVertex,
+		fragmentShader: atmosFragment,
+		blending: THREE.AdditiveBlending,
+		side: THREE.BackSide,
+	})
+);
 
-const light1 = new THREE.DirectionalLight(0xffffff, 1);
-light1.position.set(0, 5, 10);
-scene.add(light1);
+scene.add(atmosphere);
 
-const light2 = new THREE.DirectionalLight(0xffffff, 0.15);
-light2.position.set(0, 0, 5);
-scene.add(light2);
+// const light1 = new THREE.DirectionalLight(0xffffff, 1);
+// light1.position.set(0, 5, 10);
+// scene.add(light1);
 
-const light3 = new THREE.AmbientLight(0xffffff, 0.1);
-scene.add(light3);
+// const light2 = new THREE.DirectionalLight(0xffffff, 0.15);
+// light2.position.set(0, 0, 5);
+// scene.add(light2);
+
+// const light3 = new THREE.AmbientLight(0xffffff, 0.1);
+// scene.add(light3);
 
 const camera = new THREE.PerspectiveCamera(45, dims.width / dims.height);
-camera.position.z = 19;
+camera.position.z = 20;
 scene.add(camera);
 
 const canvas = document.querySelector(".webgl");
@@ -64,6 +86,10 @@ resizeLoop();
 
 const timeline = gsap.timeline({ defaults: { duration: 1.5 } });
 
-timeline.fromTo(mesh.scale, { x: 0, y: 0, z: 0 }, { x: 1, y: 1, z: 1 });
+timeline.fromTo(
+	[earth.scale, atmosphere.scale],
+	{ x: 0, y: 0, z: 0 },
+	{ x: 1, y: 1, z: 1 }
+);
 timeline.fromTo(".intro", { opacity: 0 }, { opacity: 1 });
 timeline.fromTo("h2, .about", { opacity: 0 }, { opacity: 1 });
